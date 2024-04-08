@@ -6,6 +6,7 @@
 //#include <linux/rcupdate.h>     /* rcu */
 #include <linux/init.h>         /* __init __exit macros */
 #include <linux/kthread.h>      /* kthreads */
+#include <linux/ktime.h>        /* time */
 #include <linux/completion.h>   /* complete/wait_for_completion */
 #include <linux/delay.h>        /* msleep */
 #include <linux/slab.h>         /* kmalloc/kzalloc */
@@ -115,7 +116,7 @@ static int sync_test_thread(void* data)
 {
     benchmark_thread_t *bench = (benchmark_thread_t *)data;
     unsigned long duration_ms;
-    struct timespec start, end;
+    ktime_t start, end, elapsed;
     unsigned long long tsc_start, tsc_end;
     rlu_thread_data_t *self = bench->rlu;
 
@@ -123,7 +124,7 @@ static int sync_test_thread(void* data)
     barrier_cross(&sync_test_barrier);
 
     tsc_start = get_cycles();
-    start = current_kernel_time();
+    start = ktime_get();
 
     /* Thread main */
     do {
@@ -144,13 +145,14 @@ static int sync_test_thread(void* data)
             bench->benchmark->lookup(self, val);
             bench->ops.nb_lookup++;
         }
-        end = current_kernel_time();
-        duration_ms = (end.tv_sec * 1000 + end.tv_nsec / 1000000) - (start.tv_sec * 1000 + start.tv_nsec / 1000000);
+        end = ktime_get();
+        elapsed = ktime_sub(end, start);
+        pr_info("elapsedTime : %lld\n",  ktime_to_ms(elapsed));
 #ifdef FORCE_SCHED
         /* No need to force schedule(), time bound. */
         cond_resched();
 #endif /* FORCE_SCHED */
-    } while (duration_ms < duration);
+    } while (ktime_to_ms(elapsed) < duration);
 
     tsc_end = get_cycles();
     pr_info(MODULE_NAME "(%i:%i) time: %lu ms (%llu cycles)\n", current->pid, bench->id, duration_ms, tsc_end - tsc_start);
