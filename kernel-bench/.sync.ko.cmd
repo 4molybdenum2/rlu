@@ -1,0 +1,1 @@
+cmd_/home/molybdenum/Repos/OS_project/rlu/kernel-bench/sync.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /home/molybdenum/Repos/OS_project/rlu/kernel-bench/sync.ko /home/molybdenum/Repos/OS_project/rlu/kernel-bench/sync.o /home/molybdenum/Repos/OS_project/rlu/kernel-bench/sync.mod.o;  true

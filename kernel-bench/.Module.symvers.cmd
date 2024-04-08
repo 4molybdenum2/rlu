@@ -1,0 +1,1 @@
+cmd_/home/molybdenum/Repos/OS_project/rlu/kernel-bench/Module.symvers := sed 's/\.ko$$/\.o/' /home/molybdenum/Repos/OS_project/rlu/kernel-bench/modules.order | scripts/mod/modpost  -a  -o /home/molybdenum/Repos/OS_project/rlu/kernel-bench/Module.symvers -e -i Module.symvers  -N -T -

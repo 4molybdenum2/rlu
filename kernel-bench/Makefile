@@ -24,3 +24,8 @@ bench:
 	dmesg -c > /dev/null
 	insmod sync.ko benchmark="rculist" threads_nb=1 update=0 range=256 duration=500
 	rmmod sync.ko
+
+
+bench-hashlist:
+	dmesg -c > /dev/null
+	insmod sync.ko benchmark="rcuhashlist" threads_nb=1 update=0 range=256 duration=500
